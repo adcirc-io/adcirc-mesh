@@ -219,6 +219,18 @@ function mesh () {
 
     };
 
+    _mesh.num_elements = function () {
+
+        return _elements.array.length / 3;
+
+    };
+
+    _mesh.num_nodes = function () {
+
+        return _nodes.array.length / _nodes.dimensions;
+
+    };
+
     return _mesh;
 
 }
