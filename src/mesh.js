@@ -2,7 +2,7 @@ import { dispatcher } from '../../adcirc-events/index'
 
 function mesh () {
 
-    var _mesh = Object.create( null );
+    var _mesh = dispatcher();
 
     var _nodes = Object.create({
         array: [],
@@ -28,7 +28,7 @@ function mesh () {
     _mesh.elemental_value = function ( value, array ) {
 
         if ( arguments.length == 1 ) return _elemental_values[ value ];
-        if ( arguments.length == 2 && array.length == _elements.array.length ) {
+        if ( arguments.length == 2 && array.length == _elements.array.length / 3 ) {
             _elemental_values[ value ] = array;
             _mesh.dispatch( {
                 'type': 'elemental_value',
@@ -74,7 +74,7 @@ function mesh () {
 
     };
 
-    return dispatcher( _mesh );
+    return _mesh;
 
 }
 
@@ -89,7 +89,7 @@ function calculate_bounding_box ( nodes ) {
         maxs.push( -Infinity );
     }
 
-    for ( var node=0; i<numnodes; ++node ) {
+    for ( var node=0; node<numnodes; ++node ) {
         for ( var dim=0; dim<dims; ++dim ) {
             if ( array[ dims*node + dim ] < mins[ dim ] ) mins[ dim ] = array[ dims*node + dim ];
             if ( array[ dims*node + dim ] > maxs[ dim ] ) maxs[ dim ] = array[ dims*node + dim ];

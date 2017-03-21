@@ -2,7 +2,7 @@
 
 ## Mesh
 
-<a name="adcirc-mesh" href="#adcirc-mesh">#</a> *adcirc*.**mesh()**
+<a name="adcirc-mesh" href="#adcirc-mesh">#</a> *adcirc*.**mesh**()
 
 Creates a new mesh object. The mesh object is an event dispatcher with the following events:
 
