@@ -170,6 +170,16 @@ function mesh () {
 
     };
 
+    _mesh.bounds = function ( value ) {
+
+        var array = _mesh.nodal_value( value ) || _mesh.elemental_value( value );
+        if ( array ) return calculate_bounding_box({
+            array: array,
+            dimensions: 1
+        });
+
+    };
+
     _mesh.elemental_value = function ( value, array ) {
 
         if ( arguments.length == 1 ) return _elemental_values[ value ];
@@ -211,10 +221,7 @@ function mesh () {
     _mesh.nodes = function ( _ ) {
 
         if ( !arguments.length ) return _nodes;
-        if ( _.array && _.map && _.dimensions ) {
-            _nodes = _;
-            _bounding_box = calculate_bounding_box( _nodes );
-        }
+        if ( _.array && _.map && _.dimensions ) store_nodes( _ );
         return _mesh;
 
     };
@@ -232,6 +239,47 @@ function mesh () {
     };
 
     return _mesh;
+
+
+    function store_nodes ( nodes ) {
+
+        var extra_dimensions = nodes.names ? Math.min( nodes.names.length, nodes.dimensions ) - 2 : 0;
+        var num_nodes = nodes.array.length / nodes.dimensions;
+        var arrays = [ new Float32Array( 2 * num_nodes ) ];
+
+        for ( var i=0; i<extra_dimensions; ++i ) {
+            arrays.push( new Float32Array( num_nodes ) );
+        }
+
+        for ( var node=0; node<num_nodes; ++node ) {
+
+            arrays[ 0 ][ 2 * node ] = nodes.array[ nodes.dimensions * node ];
+            arrays[ 0 ][ 2 * node + 1 ] = nodes.array[ nodes.dimensions * node + 1 ];
+
+            for ( var dimension = 0; dimension < extra_dimensions; ++dimension ) {
+
+                arrays[ 1 + dimension ][ node ] = nodes.array[ nodes.dimensions * node + 2 + dimension ];
+
+            }
+        }
+
+        _nodes = {
+            array: arrays[0],
+            map: nodes.map,
+            dimensions: 2,
+            names: ['x', 'y']
+        };
+
+        for ( var dimension = 0; dimension < extra_dimensions; ++dimension ) {
+
+            var name = nodes.names[ 2 + dimension ];
+            _nodal_values[ name ] = arrays[ 1 + dimension ];
+
+        }
+
+        _bounding_box = calculate_bounding_box( _nodes );
+
+    }
 
 }
 
@@ -253,7 +301,7 @@ function calculate_bounding_box ( nodes ) {
         }
     }
 
-    return [ mins, maxs ];
+    return dims == 1 ? [ mins[0], maxs[0] ] : [ mins, maxs ];
 
 }
 

@@ -57,5 +57,8 @@ Gets or sets the nodes in the mesh. If setting, *nodes* must be an object contai
 * *array* - A Float32Array containing flattened nodal values, e.g. `[ x1, y1, z1, x2, y2, z2, ... ]`
 * *map* - A d3 map that maps from node number to node index, e.g. `{ 1: 0, 2: 1, 3: 2, ... }`
 * *dimensions* - The number of values per node in *array*, which would be 3 for this example (x, y, and z).
+* *names* [optional] - The name associated with each dimension. If included, the first two must always be 'x' and 'y'. Additional names will be used to as nodal values.
+
+If the *names* property is included and *dimensions* is greater than two, each additional dimension will be included as a nodal value with the associated name. If there are more than two dimensions but the *names* property is not included, the additional dimensions will not be included as nodal values.
 
 Setting the nodes returns the mesh object.
