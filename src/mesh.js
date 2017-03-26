@@ -61,7 +61,7 @@ function mesh () {
     _mesh.nodal_value = function ( value, array ) {
 
         if ( arguments.length == 1 ) return _nodal_values[ value ];
-        if ( arguments.length == 2 && array.length == _nodes.array.length ) {
+        if ( arguments.length == 2 && array.length == _nodes.array.length / _nodes.dimensions ) {
             _nodal_values[ value ] = array;
             _mesh.dispatch( {
                 'type': 'nodal_value',
@@ -128,7 +128,7 @@ function mesh () {
         for ( var dimension = 0; dimension < extra_dimensions; ++dimension ) {
 
             var name = nodes.names[ 2 + dimension ];
-            _nodal_values[ name ] = arrays[ 1 + dimension ];
+            _mesh.nodal_value( name, arrays[ 1 + dimension ] );
 
         }
 
@@ -151,8 +151,10 @@ function calculate_bounding_box ( nodes ) {
 
     for ( var node=0; node<numnodes; ++node ) {
         for ( var dim=0; dim<dims; ++dim ) {
-            if ( array[ dims*node + dim ] < mins[ dim ] ) mins[ dim ] = array[ dims*node + dim ];
-            if ( array[ dims*node + dim ] > maxs[ dim ] ) maxs[ dim ] = array[ dims*node + dim ];
+            if ( array[ dims * node + dim ] !== -99999 ) {
+                if ( array[ dims * node + dim ] < mins[ dim ] ) mins[ dim ] = array[ dims * node + dim ];
+                if ( array[ dims * node + dim ] > maxs[ dim ] ) maxs[ dim ] = array[ dims * node + dim ];
+            }
         }
     }
 
