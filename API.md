@@ -27,6 +27,10 @@ When an elemental value is set, the following event is dispatched
 }
 ```
 
+<a name="mesh-elemental-values" href="#mesh-elemental-values">#</a> *mesh*.**elemental_values**()
+
+Returns a list of available elemental values.
+
 <a name="mesh-elements" href="#mesh-elements">#</a> *mesh*.**elements**([*elements*])
 
 Gets or sets the elements in the mesh. If setting, *elements* must be an object containing the following properties:
@@ -49,6 +53,10 @@ When a nodal value is set, the following event is dispatched
     'array': array
 }
 ```
+
+<a name="mesh-nodal-values" href="#mesh-nodal-values">#</a> *mesh*.**nodal_values**()
+
+Returns a list of available nodal values.
 
 <a name="mesh-nodes" href="#mesh-nodes">#</a> *mesh*.**nodes**([*nodes*])
 

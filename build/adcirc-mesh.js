@@ -97,7 +97,8 @@ function dispatcher ( object ) {
 
         if ( listenerArray !== undefined ) {
 
-            event.target = object;
+            if ( event.target === undefined )
+                event.target = object;
 
             length = listenerArray.length;
 
@@ -117,7 +118,8 @@ function dispatcher ( object ) {
 
         if ( oneoffArray !== undefined ) {
 
-            event.target = object;
+            if ( event.target === undefined )
+                event.target = object;
 
             length = oneoffArray.length;
 
@@ -159,8 +161,8 @@ function mesh () {
         map: d3.map()
     });
 
-    var _nodal_values = Object.create( null );
-    var _elemental_values = Object.create( null );
+    var _nodal_values = d3.map();
+    var _elemental_values = d3.map();
 
     var _bounding_box;
 
@@ -182,16 +184,22 @@ function mesh () {
 
     _mesh.elemental_value = function ( value, array ) {
 
-        if ( arguments.length == 1 ) return _elemental_values[ value ];
+        if ( arguments.length == 1 ) return _elemental_values.get( value );
         if ( arguments.length == 2 && array.length == _elements.array.length / 3 ) {
-            _elemental_values[ value ] = array;
+            _elemental_values.set( value, array );
             _mesh.dispatch( {
-                'type': 'elemental_value',
-                'name': value,
-                'array': array
+                type: 'elemental_value',
+                name: value,
+                array: array
             } );
         }
         return _mesh;
+
+    };
+
+    _mesh.elemental_values = function () {
+
+        return _elemental_values.keys();
 
     };
 
@@ -199,22 +207,34 @@ function mesh () {
 
         if ( !arguments.length ) return _elements;
         if ( _.array && _.map ) _elements = _;
+
+        _mesh.dispatch( {
+            type: 'num_elements',
+            num_elements: _mesh.num_elements()
+        } );
+
         return _mesh;
 
     };
 
     _mesh.nodal_value = function ( value, array ) {
 
-        if ( arguments.length == 1 ) return _nodal_values[ value ];
+        if ( arguments.length == 1 ) return _nodal_values.get( value );
         if ( arguments.length == 2 && array.length == _nodes.array.length / _nodes.dimensions ) {
-            _nodal_values[ value ] = array;
+            _nodal_values.set( value, array );
             _mesh.dispatch( {
-                'type': 'nodal_value',
-                'name': value,
-                'array': array
+                type: 'nodal_value',
+                name: value,
+                array: array
             } );
         }
         return _mesh;
+
+    };
+
+    _mesh.nodal_values = function () {
+
+        return _nodal_values.keys();
 
     };
 
@@ -222,6 +242,17 @@ function mesh () {
 
         if ( !arguments.length ) return _nodes;
         if ( _.array && _.map && _.dimensions ) store_nodes( _ );
+
+        _mesh.dispatch( {
+            type: 'bounding_box',
+            bounding_box: _bounding_box
+        } );
+
+        _mesh.dispatch( {
+            type: 'num_nodes',
+            num_nodes: _mesh.num_nodes()
+        } );
+
         return _mesh;
 
     };
