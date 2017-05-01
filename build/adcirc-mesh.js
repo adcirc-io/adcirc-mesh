@@ -217,6 +217,39 @@ function mesh () {
 
     };
 
+    _mesh.find_node = function ( coordinates ) {
+
+        var num_nodes = _nodes.array.length / 2;
+        var closest = {
+            node_number: null,
+            distance: Infinity
+        };
+        var min_distance = Infinity;
+
+        for ( var x, y, d, i = 0; i < num_nodes; ++i ) {
+
+            x = _nodes.array[ 2 * i ];
+            y = _nodes.array[ 2 * i + 1 ];
+            d = distance( x, y );
+
+            if ( d < closest.distance ) {
+                closest.distance = d;
+                closest.node_number = i + 1;
+                closest.coordinates = [ x, y ];
+            }
+
+        }
+
+        return closest;
+
+        function distance ( x, y ) {
+
+            return ( x - coordinates[0] )*( x - coordinates[0] ) + ( y - coordinates[1] )*( y - coordinates[1] );
+
+        }
+
+    };
+
     _mesh.nodal_value = function ( value, array ) {
 
         if ( arguments.length == 1 ) return _nodal_values.get( value );
